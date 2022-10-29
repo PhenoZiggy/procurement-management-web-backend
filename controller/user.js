@@ -85,7 +85,7 @@ export const loginUser = async (req, res) => {
 export const currentUser = async (req, res) => {
   const email = req.email;
   const filter = { email: email };
-  await User.findOne({ filter })
+  await User.findOne(filter)
     .then((response) => {
       res.status(200).json({ response });
     })
