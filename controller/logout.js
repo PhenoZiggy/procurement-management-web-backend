@@ -1,10 +1,11 @@
 import User from '../models/user';
 
 export const logOutUser = async (req, res) => {
-  const cookies = req.cookies;
+  const authHeader = req.headers.refresh;
+  console.log(authHeader);
 
-  if (cookies.jwt) {
-    const refreshToken = cookies.jwt;
+  if (authHeader) {
+    const refreshToken = authHeader.split(' ')[1];
     const foundUser = await User.findOne({ refreshToken: refreshToken })
       .then((result) => {
         return result;
@@ -23,7 +24,6 @@ export const logOutUser = async (req, res) => {
         }
       )
         .then((response) => {
-          res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true }); //secure true on production
           res.status(200).json({ message: 'Cleared' });
         })
         .catch((error) => {
@@ -34,6 +34,6 @@ export const logOutUser = async (req, res) => {
       res.status(200).json({ message: 'Cleared , no user found on that Cookie' });
     }
   } else {
-    return res.status(200).json({ message: 'Cookie not included, Successfull' });
+    return res.status(200).json({ message: 'Header not included, Successfull' });
   }
 };
