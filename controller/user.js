@@ -50,7 +50,7 @@ export const loginUser = async (req, res) => {
           email: foundUser.emaial,
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: '30s' }
+        { expiresIn: '1h' }
       );
       const refreshToken = jwt.sign(
         {
@@ -68,8 +68,11 @@ export const loginUser = async (req, res) => {
         }
       )
         .then((response) => {
-          res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
-          res.status(200).json({ token: accessToken });
+          res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', Secure: true, maxAge: 24 * 60 * 60 * 1000 });
+          res.status(200).json({
+            token: accessToken,
+            refresh: refreshToken,
+          });
         })
         .catch((error) => {
           res.status(500).json({ message: 'Error while updating the token', error: error });
