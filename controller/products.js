@@ -10,7 +10,7 @@ export const getAllProducts = async (req, res) => {
 }
 
 export const getProductById = async (req, res) => {
-  const { id } = req.params
+  const { id } = req.query
   try {
     const product = await Products.findById(id)
     res.status(200).json(product)
@@ -20,7 +20,7 @@ export const getProductById = async (req, res) => {
 }
 
 export const reduceProductStock = async (req, res) => {
-  const { id, amount } = req.params
+  const { id, amount } = req.query
   try {
     const product = await Products.findById(id)
     product.quantity = product.quantity - amount
@@ -39,7 +39,7 @@ export const reduceProductStock = async (req, res) => {
 }
 
 export const addProductStock = async (req, res) => {
-  const { id, amount } = req.params
+  const { id, amount } = req.query
   try {
     const product = await Products.findById(id)
     product.quantity = product.quantity + amount
@@ -64,7 +64,16 @@ export const createProduct = async (req, res) => {
     return res.status(400).json({ message: "Product is required" })
   }
 
-  await Products.create(product)
+  await Products.create({
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    stock: product.stock,
+    quantity: product.quantity,
+    imageSrc: product.imageSrc,
+    imageAlt: product.imageAlt,
+    categories: product.categories,
+  })
     .then((doc) => {
       return res.status(200).json({ message: "Product created", doc })
     })
