@@ -1,8 +1,6 @@
 import User from '../models/user';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import fsPromises from 'fs/promises';
-import path from 'path';
 require('dotenv').config();
 
 export const registerUser = async (req, res) => {
@@ -47,7 +45,7 @@ export const loginUser = async (req, res) => {
     if (matchPassword) {
       const accessToken = jwt.sign(
         {
-          email: foundUser.emaial,
+          email: foundUser.email,
         },
         process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: '1h' }
@@ -68,7 +66,6 @@ export const loginUser = async (req, res) => {
         }
       )
         .then((response) => {
-          res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', Secure: true, maxAge: 24 * 60 * 60 * 1000 });
           res.status(200).json({
             token: accessToken,
             refresh: refreshToken,
@@ -83,4 +80,16 @@ export const loginUser = async (req, res) => {
   } else {
     res.status(404).json({ message: 'User notfound!' });
   }
+};
+
+export const currentUser = async (req, res) => {
+  const email = req.email;
+  const filter = { email: email };
+  await User.findOne(filter)
+    .then((response) => {
+      res.status(200).json({ response });
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
 };
