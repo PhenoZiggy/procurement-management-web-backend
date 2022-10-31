@@ -16,7 +16,7 @@ router.get("/products/get-by-id", getProductById)
 router.post("/products/reduce-stock", reduceProductStock)
 router.post("/products/add-stock", addProductStock)
 router.post("/products/create", createProduct)
-router.delete("/products/delete", deleteProduct)
+router.delete("/products/delete/:id", deleteProduct)
 router.put("/products/update", updateProduct)
 
 
