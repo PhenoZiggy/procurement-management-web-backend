@@ -57,23 +57,30 @@ export const loginUser = async (req, res) => {
         process.env.REFRESH_TOKEN_SECRET,
         { expiresIn: '1d' }
       );
-      await User.findByIdAndUpdate(
-        { _id: foundUser._id },
-        { token: refreshToken },
-        {
-          new: true,
-          upsert: true, // Make this update into an upsert
-        }
-      )
-        .then((response) => {
-          res.status(200).json({
-            token: accessToken,
-            refresh: refreshToken,
+      if (foundUser.token === 'loggedOut') {
+        await User.findByIdAndUpdate(
+          { _id: foundUser._id },
+          { token: refreshToken },
+          {
+            new: true,
+            upsert: true, // Make this update into an upsert
+          }
+        )
+          .then((response) => {
+            res.status(200).json({
+              token: accessToken,
+              refresh: refreshToken,
+            });
+          })
+          .catch((error) => {
+            res.status(500).json({ message: 'Error while updating the token', error: error });
           });
-        })
-        .catch((error) => {
-          res.status(500).json({ message: 'Error while updating the token', error: error });
+      } else {
+        res.status(200).json({
+          token: accessToken,
+          refresh: foundUser.token,
         });
+      }
     } else {
       res.status(401).json({ message: 'Password Missmatch!' });
     }
