@@ -1,6 +1,6 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose';
 
-const { Schema } = mongoose
+const { Schema } = mongoose;
 
 const OrderSchema = new Schema(
   {
@@ -16,10 +16,15 @@ const OrderSchema = new Schema(
       type: JSON,
       required: true,
     },
+    orderStatus: {
+      type: JSON,
+      default: 1,
+      required: true,
+    },
   },
   {
     timestamps: true,
-  },
-)
+  }
+);
 
-export default mongoose.model("Order", OrderSchema)
+export default mongoose.model('Order', OrderSchema);
