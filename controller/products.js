@@ -11,7 +11,6 @@ export const getAllProducts = async (req, res) => {
 
 export const getProductById = async (req, res) => {
   const { id } = req.query;
-  console.log(id);
   try {
     const product = await Products.findById(id);
     res.status(200).json(product);
