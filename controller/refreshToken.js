@@ -25,7 +25,8 @@ export const refreshToken = async (req, res) => {
           } else {
             const accessToken = jwt.sign(
               {
-                mail: decoded.mail,
+                email: decoded.email,
+                userId: decoded.userId,
               },
               process.env.ACCESS_TOKEN_SECRET,
               {

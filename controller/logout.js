@@ -2,11 +2,11 @@ import User from '../models/user';
 
 export const logOutUser = async (req, res) => {
   const authHeader = req.headers.refresh;
-  console.log(authHeader);
+  const mail = req.email;
 
   if (authHeader) {
     const refreshToken = authHeader.split(' ')[1];
-    const foundUser = await User.findOne({ refreshToken: refreshToken })
+    const foundUser = await User.findOne({ email: mail })
       .then((result) => {
         return result;
       })
