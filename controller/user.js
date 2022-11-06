@@ -70,6 +70,7 @@ export const loginUser = async (req, res) => {
         )
           .then((response) => {
             res.status(200).json({
+              userId : foundUser._id,
               token: accessToken,
               refresh: refreshToken,
             });
@@ -79,6 +80,7 @@ export const loginUser = async (req, res) => {
           });
       } else {
         res.status(200).json({
+          userId : foundUser._id,
           token: accessToken,
           refresh: foundUser.token,
         });
