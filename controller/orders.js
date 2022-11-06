@@ -21,12 +21,54 @@ export const retrieveUserOrders = async (req, res) => {
     const userId = req.userId;
     const filter = {userId: userId};
     await Orders.find(filter)
-        .then((response) => {
-            res.status(200).json({response});
+    .then((response) => {
+
+        const newOrderRes = []
+
+        const promises = response.map(async (singleOrder, index) => {
+            let products = []
+            let productsIds = []
+
+            singleOrder.items.map((singleItem) => {
+                productsIds.push(singleItem.id)
+            })
+
+            const promises = productsIds.map(async (singleId) => {
+                return await Products.findById(singleId)
+            })
+
+
+            await Promise.all(promises).then((response) => {
+                products = response
+
+                const productsWithAmount = products.map((singleProduct, index) => {
+                    if (singleProduct && singleProduct._doc) {
+                        const singleProductWithQuantity = {
+                            ...singleProduct._doc,
+                            amount: singleOrder.items[index].amount
+                        }
+                        return singleProductWithQuantity
+                    }
+
+
+                })
+
+                newOrderRes.push({
+                    ...singleOrder._doc,
+                    productsWithAmount,
+                })
+            })
+
         })
-        .catch((error) => {
-            res.status(401).json({message: 'Something went wrong', error: error});
-        });
+
+        Promise.all(promises).then((response) => {
+            res.status(200).json(newOrderRes);
+        })
+
+    })
+    .catch((err) => {
+        res.status(500).json(err);
+    });
 };
 
 export const updateOrderStatus = async (req, res) => {
